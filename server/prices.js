@@ -1,5 +1,5 @@
 module.exports.PRICES = {
-    "United States Dollar": ["USD", 1],
+    "USD": ["United States Dollar", 1],
     "BTC": ["Bitcoin", 6159.56],
     "ETH": ["Ethereum", 444.45],
     "XRP": ["Ripple", 0.4694],

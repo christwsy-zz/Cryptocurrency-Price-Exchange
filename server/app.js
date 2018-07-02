@@ -20,26 +20,40 @@ wsServer.on('request', function (request) {
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
       var json = JSON.parse(message.utf8Data);
-      if (cachedRates[json.src + json.tgt] == null) {
-        var srcPrice = prices[json.src];
-        var tgtPrice = prices[json.tgt];
-        var rate = srcPrice[1] / tgtPrice[1];
-        var srctgtCache = {
-          srcPrice, tgtPrice, rate
-        }
-        var tgtsrcCache = {
-          'srcPrice': tgtPrice,
-          'tgtPrice': srcPrice,
-          'rate': 1/rate
-        }
-        cachedRates[json.src + json.tgt] = srctgtCache;
-        cachedRates[json.tgt + json.src] = tgtsrcCache;
+      switch (json.type) {
+        case 'rate':
+          if (cachedRates[json.src + json.tgt] == null) {
+            var srcPrice = prices[json.src];
+            var tgtPrice = prices[json.tgt];
+            var rate = srcPrice[1] / tgtPrice[1];
+            var srctgtCache = {
+              srcPrice, tgtPrice, rate
+            }
+            var tgtsrcCache = {
+              'srcPrice': tgtPrice,
+              'tgtPrice': srcPrice,
+              'rate': 1 / rate
+            }
+            cachedRates[json.src + json.tgt] = srctgtCache;
+            cachedRates[json.tgt + json.src] = tgtsrcCache;
+          }
+          connection.send(JSON.stringify({
+            'type': 'rate',
+            'data': cachedRates[json.src + json.tgt]
+          }));
+          break;
+        case 'currencylist':
+          connection.send(JSON.stringify({
+            'type': 'currencylist', 
+            'data': Object.keys(prices)
+          }));
+        default:
+          break;
       }
-      connection.send(JSON.stringify(cachedRates[json.src + json.tgt]));
+      
     }
   });
 
   connection.on('close', function (connection) {
-    console.log('User disconnected from server');
   });
 });
