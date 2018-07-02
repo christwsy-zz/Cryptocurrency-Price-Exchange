@@ -3,4 +3,4 @@
 ## Get Started
 Install: `npm install`
 
-Run: `npm start`, then open index.html in `\client` folder.
+Run: go to `\server` folder and install first, then run `npm start`. Open index.html in `\client` folder and you can see the result.
